@@ -39,3 +39,21 @@ PORT     STATE SERVICE     VERSION
 |_http-server-header: Apache/2.4.18 (Ubuntu)
 
 ``` 
+
+#### Gobuster
+Perform brute force attack with `Gobuster` to determine if there are hidden directories.
+When I run the scan like this it shows me an error, this happens because the web server is not on the standard port (port 80), but rather on port 3333
+```bash
+gobuster dir -u http://10.10.195.20 -w /usr/share/wordlists/dirb/big.txt
+``` 
+
+#### Command is executed again specifying port
+
+```bash
+gobuster dir -u http://10.10.195.20:3333 -w /usr/share/wordlists/dirbuster/directory-list-1.0.txt
+``` 
+
+#### Brute force result
+In these results several directories are identified, I focus on one called `/internal/`, in this path I can upload files to the server.
+![alt text](imgs/img1.png)
+
