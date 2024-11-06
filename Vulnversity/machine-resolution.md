@@ -14,14 +14,14 @@ The **Vulnversity** machine is an introductory-level machine on TryHackMe that a
 - **IP Address**: 10.10.120.94
 - **Objective**: Gain access and privileges on the machine using ethical hacking techniques.
 
-## 2. Enumeración
+## 2. Enumeration
 We scan with `nmap` to detect service versions. This gives us a better idea of what specific vulnerabilities might be present.
 ```bash
 nmap -sC -sV -oN 10.10.120.94/initial_scan.txt 10.10.120.94
 ``` 
 
-#### Banderas usadas
-- **sC:** Runs default nmap script scans, getting more details about services (like versions and potential vulnerabilities).
+#### Used flags
+- **-sC:** Runs default nmap script scans, getting more details about services (like versions and potential vulnerabilities).
 - **-sV:** Detects versions of services on each open port, helping us determine if they are vulnerable or outdated versions.
 - **-oN  nmap/initial_scan.txt** Saves the scan results to a file named initial_scan.txt for future reference.
 
