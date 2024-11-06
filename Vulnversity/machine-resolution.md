@@ -123,7 +123,7 @@ In this case, among all the listed files there is one that stands out. `/bin/sys
 
 #### External resource 
 On [this page](https://gtfobins.github.io/gtfobins/systemctl/#suid) you can find different scripts that when executed will allow me to escalate privileges.
-In this case the executed code is this:
+In this case the code executed is the following and what it does is indicate that the file /bin/bash should receive the SUID bit, this allows that every time any user executes /bin/bash, the command is executed with root permissions
 ```plaintext
 TF=$(mktemp).service
 echo '[Service]
